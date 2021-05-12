@@ -62,8 +62,14 @@ pollen_long <-
 # 1 = geringe Belastung, 1-2 = geringe bis mittlere Belastung,
 # 2 = mittlere Belastung, 2-3 = mittlere bis hohe Belastung, 3 = hohe Belastung
 
+# only mid
+pollen_mid_high <-
+  pollen_long %>%
+  filter(warninglevel == "2-3")
 
-
-
+# filter PLZ
+plz_mid_high <- 
+  plzDE %>%
+  filter(region_id %in% pollen_mid_high$region_id)
 
 #######
