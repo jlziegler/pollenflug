@@ -7,14 +7,14 @@ library(tidyverse)
 ############################
 
 # import csv (downloaded from https://www.suche-postleitzahl.org/downloads)
-plzDE <- read_csv("zuordnung_plz_ort.csv")
+plz_DE <- read_csv("zuordnung_plz_ort.csv")
 
 # remove first column
-plzDE <- plzDE[,-1]
+plz_DE <- plz_DE[,-1]
 
 # add region id (taken from https://opendata.dwd.de/climate_environment/health/alerts/Beschreibung_pollen_s31fg.pdf)
-plzDE <-
-  plzDE %>%
+plz_DE <-
+  plz_DE %>%
   mutate(region_id = case_when(str_detect(bundesland, "^Sch") | str_detect(bundesland, "^Ham") ~ 10,
                                str_detect(bundesland, "^Mec") ~ 20,
                                str_detect(bundesland, "^Nie") | str_detect(bundesland, "^Bre") ~ 30,
@@ -62,7 +62,7 @@ pollen_long <-
 # 1 = geringe Belastung, 1-2 = geringe bis mittlere Belastung,
 # 2 = mittlere Belastung, 2-3 = mittlere bis hohe Belastung, 3 = hohe Belastung
 
-# only mid
+# only mid to high
 pollen_mid_high <-
   pollen_long %>%
   filter(warninglevel == "2-3")
