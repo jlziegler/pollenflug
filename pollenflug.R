@@ -1,10 +1,12 @@
-###########
+############################
 # © Joshua Ziegler
 # May 12, 2021
 
 library(tidyverse)
 
-# import csv
+############################
+
+# import csv (downloaded from https://www.suche-postleitzahl.org/downloads)
 plzDE <- read_csv("zuordnung_plz_ort.csv")
 
 # remove first column
@@ -37,12 +39,31 @@ pollen_json <-
   jsonlite::fromJSON("https://opendata.dwd.de/climate_environment/health/alerts/s31fg.json")
 
 # create data table with pollen data
-pollen_data <- as.data.frame(pollen_json$content)
+pollen_data <- flatten(pollen_json$content)
 
 # types of pollen (just for memorisation):
 pollentypes <- 
   c("Beifuss", "Graeser", "Roggen", "Esche", "Birke", "Hasel", "Ambrosia", "Erle")
 
-# 
+# transform to longer data table
+pollen_long <-
+  pollen_data %>% 
+    pivot_longer(
+      cols = starts_with("Pollen"),
+      names_to = c("pollentype", "day"),
+      names_pattern = "Pollen\\.(.*)\\.(.*)",  # extracted strings in brackets, \\ to escape dots
+      values_to = "warninglevel"
+    )
+
+############################
+
+# filter by warninglevel
+# -1 = missing, 0 = keine Belastung, 0-1 = keine bis geringe Belastung
+# 1 = geringe Belastung, 1-2 = geringe bis mittlere Belastung,
+# 2 = mittlere Belastung, 2-3 = mittlere bis hohe Belastung, 3 = hohe Belastung
+
+
+
+
 
 #######
