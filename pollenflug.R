@@ -30,8 +30,19 @@ plzDE <-
                               )
          )
 
+############################
+
+# import JSON
+pollen_json <-
+  jsonlite::fromJSON("https://opendata.dwd.de/climate_environment/health/alerts/s31fg.json")
+
+# create data table with pollen data
+pollen_data <- as.data.frame(pollen_json$content)
+
+# types of pollen (just for memorisation):
+pollentypes <- 
+  c("Beifuss", "Graeser", "Roggen", "Esche", "Birke", "Hasel", "Ambrosia", "Erle")
+
 # 
-
-
 
 #######
