@@ -39,7 +39,7 @@ pollen_json <-
   jsonlite::fromJSON("https://opendata.dwd.de/climate_environment/health/alerts/s31fg.json")
 
 # create data table with pollen data
-pollen_data <- flatten(pollen_json$content)
+pollen_data <- jsonlite::flatten(pollen_json$content)
 
 # types of pollen (just for memorisation):
 pollentypes <- 
@@ -69,7 +69,7 @@ pollen_mid_high <-
 
 # filter PLZ
 plz_mid_high <- 
-  plzDE %>%
+  plz_DE %>%
   filter(region_id %in% pollen_mid_high$region_id)
 
 #######
