@@ -7,32 +7,33 @@ library(tidyverse)
 ############################
 
 # import csv (downloaded from https://www.suche-postleitzahl.org/downloads)
-plz_DE <- read_csv("zuordnung_plz_ort.csv")
+#plz_DE <- read_csv("zuordnung_plz_ort.csv")
 
 # remove first column
-plz_DE <- plz_DE[,-1]
+#plz_DE <- plz_DE[,-1]
 
 # add region id (taken from https://opendata.dwd.de/climate_environment/health/alerts/Beschreibung_pollen_s31fg.pdf)
-plz_DE <-
-  plz_DE %>%
-  mutate(region_id = case_when(str_detect(bundesland, "^Sch") | str_detect(bundesland, "^Ham") ~ 10,
-                               str_detect(bundesland, "^Mec") ~ 20,
-                               str_detect(bundesland, "^Nie") | str_detect(bundesland, "^Bre") ~ 30,
-                               str_detect(bundesland, "^Nor") ~ 40,
-                               str_detect(bundesland, "^Bra") | str_detect(bundesland, "^Ber") ~ 50,
-                               str_detect(bundesland, "^Sachsen-") ~ 60,
-                               str_detect(bundesland, "^Thü") ~ 70,
-                               str_detect(bundesland, "Sachsen") ~ 80,
-                               str_detect(bundesland, "^Hes") ~ 90,
-                               str_detect(bundesland, "^Rhe") | str_detect(bundesland, "^Saa") ~ 100, 
-                               str_detect(bundesland, "^Bad") ~ 110,
-                               str_detect(bundesland, "^Bay") ~ 120,
-                               
-    
-                              )
-         )
+#plz_DE <-
+#  plz_DE %>%
+#  mutate(region_id = case_when(str_detect(bundesland, "^Sch") | str_detect(bundesland, "^Ham") ~ 10,
+#                               str_detect(bundesland, "^Mec") ~ 20,
+#                               str_detect(bundesland, "^Nie") | str_detect(bundesland, "^Bre") ~ 30,
+#                               str_detect(bundesland, "^Nor") ~ 40,
+#                               str_detect(bundesland, "^Bra") | str_detect(bundesland, "^Ber") ~ 50,
+#                               str_detect(bundesland, "^Sachsen-") ~ 60,
+#                               str_detect(bundesland, "^Thü") ~ 70,
+#                               str_detect(bundesland, "Sachsen") ~ 80,
+#                               str_detect(bundesland, "^Hes") ~ 90,
+#                               str_detect(bundesland, "^Rhe") | str_detect(bundesland, "^Saa") ~ 100, 
+#                               str_detect(bundesland, "^Bad") ~ 110,
+#                               str_detect(bundesland, "^Bay") ~ 120
+#                              )
+#         )
 
 ############################
+
+# read plz
+plz_DE <- read.csv("plz_DE.csv")
 
 # import JSON
 pollen_json <-
@@ -42,8 +43,8 @@ pollen_json <-
 pollen_data <- jsonlite::flatten(pollen_json$content)
 
 # types of pollen (just for memorisation):
-pollentypes <- 
-  c("Beifuss", "Graeser", "Roggen", "Esche", "Birke", "Hasel", "Ambrosia", "Erle")
+#pollentypes <- 
+#  c("Beifuss", "Graeser", "Roggen", "Esche", "Birke", "Hasel", "Ambrosia", "Erle")
 
 # transform to longer data table
 pollen_long <-
@@ -62,14 +63,17 @@ pollen_long <-
 # 1 = geringe Belastung, 1-2 = geringe bis mittlere Belastung,
 # 2 = mittlere Belastung, 2-3 = mittlere bis hohe Belastung, 3 = hohe Belastung
 
+# filter level
+filterlevel <- c("2", "2-3", "3")
+
 # only mid to high
-pollen_mid_high <-
+pollen_filter <-
   pollen_long %>%
-  filter(warninglevel == "2-3")
+  filter(warninglevel %in% filterlevel)
 
 # filter PLZ
-plz_mid_high <- 
+plz_filter <- 
   plz_DE %>%
-  filter(region_id %in% pollen_mid_high$region_id)
+  filter(subregion_ID %in% pollen_filter$partregion_id)
 
 #######
