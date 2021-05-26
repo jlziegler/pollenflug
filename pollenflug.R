@@ -42,10 +42,6 @@ pollen_json <-
 # create data table with pollen data
 pollen_data <- jsonlite::flatten(pollen_json$content)
 
-# types of pollen (just for memorisation):
-#pollentypes <- 
-#  c("Beifuss", "Graeser", "Roggen", "Esche", "Birke", "Hasel", "Ambrosia", "Erle")
-
 # transform to longer data table
 pollen_long <-
   pollen_data %>% 
